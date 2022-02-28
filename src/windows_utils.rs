@@ -14,6 +14,7 @@ use winapi::{
         winnt::{KEY_WRITE, REG_OPTION_NON_VOLATILE, REG_SZ},
         winreg::{RegCloseKey, RegCreateKeyExA, RegDeleteTreeA, RegSetValueExA, HKEY_CURRENT_USER},
         winuser::SetProcessDpiAwarenessContext,
+        winuser::SetProcessDPIAware,
     },
 };
 
@@ -219,6 +220,14 @@ pub fn register_rightclick_file() -> bool {
     true
 }
 
+#[cfg(feature = "legacy-win-compat")]
+pub fn windows_fix_dpi() {
+    unsafe {
+        SetProcessDPIAware();
+    }
+}
+
+#[cfg(not(feature = "legacy-win-compat"))]
 pub fn windows_fix_dpi() {
     unsafe {
         SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
